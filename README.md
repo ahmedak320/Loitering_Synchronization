@@ -95,6 +95,7 @@ N_YAW: 4  # Number of pulse locations for FPS method
 ACCEPTANCE_RANGE: 0.2  # Synchronization threshold in radians
 LOITER_RADIUS: 150  # Radius of loitering circle in meters
 CONTROL_DELAY: 1.0  # Control loop time step
+yaml```
 
 ### Running the Synchronization
 bash
