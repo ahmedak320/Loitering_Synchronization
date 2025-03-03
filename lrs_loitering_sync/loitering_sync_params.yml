@@ -1,0 +1,73 @@
+# All the parameters needed for synchronized loitering
+
+
+MISSION_PATH: 'lrs_workspace/src/lrs_modules/lrs_formation_flights/lrs_formation_flights/missions/simulation'
+NUM_WP_TURN: 25
+
+DDS_FLAG: true # Flag to indicate if we are using the DDS environment. It increments the drone ids by 1 for mission_upload purposes
+NUM_DRONES: 4 # Number of drones. Used for mission plan generation only
+DRONE_IDS: # Dictionary with drone numbers and their id numbers. The numbers on the right should always be sequential starting at 1.
+  '1': 1
+  '2': 2
+  '3': 3
+  '4': 4
+LOAD_PLAN: false # Flag that allows skipping the generation and autoloading of new plans
+chosen_method: consensus_formation # available methods: no_formations, consensus_formation, leader_follower
+FORM: line #arrow or line for now
+
+SIMULATION: true
+REAL_SPEEDS: # speed of real flights
+  cruise: 23.0
+  high: 25.0
+  low: 21.0
+SIMULATION_SPEEDS: # speed used in simulation (chosen when SIMULATION is true)
+  cruise: 17.0
+  high: 19.0
+  low: 15.0
+
+ACCEPTANCE_RANGE: 0.2 # Angle difference in radians to be considering synchronized
+# CONTROL_DELAY: .2 # time step for control loop. For yaw0 and ideal methods.
+BACKYARD: false # flag to enable backyard testing. Skips mission waypoint 2 check.
+RANDOM_SEED: 1 # Random seed for takeoff delay. -1 to not use a seed
+# TAKEOFF_DELAY: 4.0 # Delay between each drone take offs to allow for desynchronization
+TAKEOFF_DELAY_RANDOM: false # Use Random takeoff delay. Random upto 60 seconds.
+
+STATE_PUBLISHING_DT: 1.0 # timestep for state publishing loop in state sharing. Used in ideal synchronization method.
+STATE_PUBLISHING_ENABLED: true
+
+
+MAX_OFFSET: 2.0 # max offset over cruise speed to compute the speed control
+SEARCH_DIRECTION_DEG: 0
+FORM_GAIN: 0.15
+ATTR_X: 0.2
+ATTR_X_LIST: [0.2, 0.5, 1]
+DIST_X: 2
+
+ESTIMATION_METHOD: 'foh'
+ESTIMATION_FLAG: false
+
+LEADER_ID: 1
+
+METRIC_DELAY: 1
+
+
+# Loitering sync params
+chosen_method: mean # mean # ideal3 # ramp_yaw_n_kuramoto # available methods: virtual, yaw0, ideal, yaw_n, ideal2, ideal3, mean, ramp_yaw0, ramp_yaw_n_kuramoto
+PHASE_OFFSET_ENABLE: true # used for the loitering sync metrics with phase offset used to set the trials
+PHASE_OFFSET: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] # angle in degrees. Phase offset between the center sync point and each drone in loitering sync. Must have as many values as NUM_DRONES
+# PHASE_OFFSET: [0,-64.94,-129.87,-194.81,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] # angle in degrees. Phase offset between the center sync point and each drone in loitering sync. Must have as many values as NUM_DRONES
+OUTPUT_PATH: 'lrs_workspace/src/lrs_modules/lrs_loitering_sync/lrs_loitering_sync/metrics/'
+TRAJECTORY_FLAG: false
+TRAJECTORY_DT: 10
+LAST_WAYPOINT: 60 # Waypoint of the last infinite loitering in the mission plan
+ACCEPTANCE_RANGE: 0.2 # Angle difference in radians to be considering synchronized
+LOITER_RADIUS: 150 # loitering radius in the mission. Used to calculate loitering loop duration. For the virtual method
+CONTROL_DELAY: 1.0 # time step for control loop. For yaw0 and ideal methods.
+TAKEOFF_DELAY: 1.0 # Delay between each drone take offs to allow for desynchronization
+
+YAW0_RANGE: 0.1 # Angle difference in radians to be considered at yaw 0. for yaw0 method.
+SPEED_COUNTER_LIMIT: 10 # Duration to keep the speed change when other drone reaches yaw0. for yaw0 method.
+
+N_YAW: 4  # Number of angles to be used in yaw_n synchronization
+SPEED_COUNTER_BASE: 20 # Base Speed counter value for distance based speed setting in yaw_n method. for yaw_n method.
+LEADER_DRONE: 1 # Leader drone id. Used for yaw_n method.
