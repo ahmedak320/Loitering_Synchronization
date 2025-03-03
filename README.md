@@ -1,190 +1,122 @@
-# Loitering Synchronization
-
-This repository contains the code relevant to the paper **"Distributed Loitering Synchronization with Fixed-Wing UAVs."** It implements three different synchronization algorithms that enable a fleet of fixed-wing UAVs to achieve coordinated loitering behavior in a decentralized manner.
+# Distributed Loitering Synchronization with Fixed-Wing UAVs
 
 ## Overview
+This repository contains the implementation of distributed loitering synchronization algorithms for fixed-wing Unmanned Aerial Vehicles (UAVs) as presented in the paper "Distributed Loitering Synchronization with Fixed-Wing UAVs" by Ahmed AlKatheeri, Agata Barciś, and Eliseo Ferrante.
 
-Loitering synchronization is essential for ensuring a fleet of UAVs aligns properly before mission execution. This repository provides implementations of three distributed synchronization algorithms:
+Distributed loitering synchronization is the process whereby a group of fixed-wing UAVs align with each other while following a circular path in the air. This process is essential to establish proper initial conditions for missions in the real world, especially where coordinated deployment is required.
 
-- **Baseline Method (Mean Synchronization)**
-- **Minimum Of Shortest Arc (MOSA)**
-- **Firefly multi-Pulse Synchronization (FPS)**
+## The Challenge
+Fixed-wing UAVs require a runway for takeoff, making it difficult to deploy a swarm simultaneously. Our approach enables drones to:
+1. Take off individually
+2. Loiter at different altitudes on coincident circles
+3. Synchronize in the air by adjusting their speeds
+4. Start their mission together once synchronized
 
-These methods allow UAVs to adjust their speeds based on local information while loitering at different altitudes on coincident circular paths.
-
----
-
-## Algorithms
+## Synchronization Methods
+This repository implements three primary synchronization algorithms:
 
 ### 1. Baseline Method (Mean Synchronization)
+The baseline method is based on distributed consensus and uses the mean phase as the synchronization target.
 
-The baseline method is inspired by the **Kuramoto model**, where the synchronization target is the mean phase of all UAVs.
-
-- Each UAV calculates the **mean heading** of all drones in the fleet.
-
-- The mean heading is determined using the centroid of the position vectors on the unit circle:
-
-  $$
-  p = \frac{1}{N} \sum_{j=1}^{N} e^{i\theta_j}
-  $$
-
-- The synchronization target is then computed as:
-
-  $$
-  \theta = \text{Arg}(p)
-  $$
-
-- UAVs adjust their speeds to reach this target.
-
-**Limitations:** This method does not account for UAV actuation constraints, leading to inefficient synchronization in real-world conditions.
-
-**Implementation File:**\
-📂 `mean_synchronization.py`
-
----
+- **Implementation**: `mean_angle_synchronization.py`
+- **Algorithm**:
+  - Each UAV calculates the mean heading angle of all drones
+  - The mean heading is determined by converting each angle to a position vector on a unit circle and finding their centroid:
+    ```
+    p̄ = (1/N) * ∑(j=1 to N) e^(iθj)
+    ```
+  - The synchronization target is computed as:
+    ```
+    θ = Arg(p̄)
+    ```
+  - UAVs adjust their speeds to reach this target
 
 ### 2. MOSA Method (Minimum Of Shortest Arc)
+The MOSA method improves upon the baseline by finding the shortest arc containing all drones and setting the synchronization target as the middle point of that arc.
 
-The **MOSA method** improves synchronization by identifying the shortest arc containing all drones and setting the synchronization target as the middle of this arc.
-
-- Each UAV calculates the shortest arc containing all UAVs.
-
-- The middle point of the arc is computed and used as the synchronization target:
-
-  $$
-  \theta_{\text{MOSA}} = \frac{\theta_{\max} + \theta_{\min}}{2} + \pi
-  $$
-
-- This ensures that all UAVs contribute to synchronization effectively.
-
-**Advantages:**
-
-- Faster synchronization compared to the baseline.
-- All drones contribute to synchronization.
-
-**Implementation File:**\
-📂 `ideal_synchronization_3.py`
-
----
+- **Implementation**: `ideal_synchronization_3.py`
+- **Algorithm**:
+  1. For each drone, calculate the distance to the closest neighbor behind and in front
+  2. Find the maximum of these distances (the largest empty arc)
+  3. Find the middle point of the arc between the two drones that create this maximum distance
+  4. Add π to this point to find the ideal meeting point (if the arc is less than π)
+  5. This becomes the desired synchronization angle
+  - Mathematically, MOSA finds the middle point of the arc and adds π:
+    ```
+    θmosa = π + mean([θjmax, θmmax])
+    ```
+  - This ensures all drones contribute to synchronization effectively
 
 ### 3. FPS Method (Firefly multi-Pulse Synchronization)
-
-The **FPS method** is inspired by firefly synchronization and significantly reduces communication overhead while maintaining performance.
-
-- Each UAV sends **pulses** when it reaches predefined locations on the loitering circle.
-
-- Upon receiving a pulse, UAVs adjust their speeds **proportionally** based on their distance from the pulse location:
-
-  $$
-  \Delta v = \Delta v_{\max} \sin(\theta_{\text{pulse}} - \theta)
-  $$
-
-- The speed adjustment resets after a set **pulse reset duration**.
-
-**Advantages:**
-
-- Uses **10x less communication** than the baseline while achieving comparable synchronization.
-- Works efficiently in low-bandwidth environments.
-
-**Implementation File:**\
-📂 `raw_yaw_n_kuramoto.py`
-
----
-
-## Metrics & Evaluation
-
-The **metrics** folder contains the methodology used to analyze synchronization performance.
-
-### **Order Parameter (Synchronization Metric)**
-
-The **order parameter** measures synchronization performance:
-
-$$
-r = \| p \|
-$$
-
-- Ranges from **0 (completely unsynchronized)** to **1 (fully synchronized)**.
-- A higher value indicates better synchronization.
-
-📂 **Metrics Implementation:**\
-`metrics/` folder contains:
-
-- Methods for data gathering.
-- Order parameter computation.
-- Performance evaluation tools.
-
----
-
-## Repository Structure
-
-. ├── lrs\_loitering\_sync/ # Core algorithm implementations │ ├── mean\_synchronization.py # Baseline method │ ├── ideal\_synchronization\_3.py # MOSA method │ ├── raw\_yaw\_n\_kuramoto.py # FPS method │ └── ... ├── metrics/ # Data gathering & performance analysis │ ├── order\_parameter.py # Synchronization metric computation │ ├── data\_collection.py # Logs and performance analysis │ └── ... ├── README.md # This file └── ...
-
-
-
-
-
-\---
-
-
-
-\## Paper Reference
-
-
-
-If you use this code or build upon this work, please consider citing our paper:
-
-
-
-\> \*\*Ahmed AlKatheeri, Agata Barciś, Eliseo Ferrante\*\* &#x20;
-
-\> \*Distributed Loitering Synchronization with Fixed-Wing UAVs\* &#x20;
-
-\> \*(Conference/Journal Name, Year, DOI TBD)\*
-
-
-
-\---
-
-
-
-\## Contributing
-
-
-
-Contributions and suggestions are welcome! If you wish to contribute:
-
-
-
-1\. \*\*Fork\*\* the repository.
-
-2\. \*\*Create\*\* a feature branch (\`git checkout -b feature/new-feature\`).
-
-3\. \*\*Commit\*\* changes (\`git commit -m 'Add new feature'\`).
-
-4\. \*\*Push\*\* to the branch (\`git push origin feature/new-feature\`).
-
-5\. \*\*Open\*\* a pull request.
-
-
-
-\---
-
-
-
-\## Contact
-
-
-
-For questions or collaborations, please contact:
-
-
-
-📧 \*\*Ahmed Ak\*\* – [your.email\@example.com]\(mailto\:your.email\@example.com)
-
-
-
-\---
-
-
-
-This README provides a structured explanation of the methods from your paper while making it clear how each algorithm is implemented. Let me know if you need any refinements!
+The FPS method is inspired by firefly synchronization and uses pulse-coupled oscillators, requiring significantly less communication while maintaining performance.
+
+- **Implementation**: `ramp_yaw_n_kuramoto_synchronization.py`
+- **Algorithm**:
+  1. The circle is divided into K points (pulse locations)
+  2. Each drone sends a pulse when it reaches one of these K predefined positions
+  3. The pulse contains only the index of the position (requiring only log₂(K) bits)
+  4. Upon receiving a pulse, drones adjust their speeds proportionally to their distance from the pulse location:
+     ```
+     Δv = Δvmax * sin(θpulse - θ)
+     ```
+  5. Speed adjustments reset after a pulse reset duration
+  6. This approach reduces communication by a factor of 10 compared to the baseline
+
+## Key Parameters
+
+The system uses the following key parameters:
+- `N`: Number of UAVs
+- `R`: Radius of the loitering circle
+- `vcruise`: Cruise speed of the UAVs
+- `vlow`: Minimum speed (vcruise - Δvmax)
+- `vhigh`: Maximum speed (vcruise + Δvmax)
+- `YAW0_RANGE`: Angle threshold for pulse emission
+- `ACCEPTANCE_RANGE`: Angle threshold for synchronization
+- `SPEED_RESET_DURATION`: Time after which speed adjustments reset
+- `LOITER_RADIUS`: Radius of the loitering circle
+
+## Performance Comparison
+
+- **MOSA**: Outperforms the baseline in continuous motion scenarios
+- **FPS**: Requires 10x less communication while maintaining comparable performance to the baseline
+- The algorithms have been validated through:
+  - Simple simulation
+  - Realistic simulation using Gazebo with fixed-wing dynamics
+  - Real-world flights using 3 fixed-wing drones
+
+## Usage
+
+### Parameters Configuration
+Configure parameters in `loitering_sync_params.yml` including:
+```yaml
+# Key parameters
+chosen_method: 'mean'  # Options: 'ideal3' (MOSA), 'ramp_yaw_n_kuramoto' (FPS), 'mean' (Baseline)
+N_YAW: 4  # Number of pulse locations for FPS method
+ACCEPTANCE_RANGE: 0.2  # Synchronization threshold in radians
+LOITER_RADIUS: 150  # Radius of loitering circle in meters
+CONTROL_DELAY: 1.0  # Control loop time step
+
+### Running the Synchronization
+bash
+ros2 run lrs_loitering_sync loitering_sync
+Running Metrics and Visualization
+bash
+ros2 run lrs_loitering_sync loitering_sync_metrics
+
+### Repository Structure
+.
+├── lrs_loitering_sync/ # Core algorithm implementations
+│   ├── mean_angle_synchronization.py     # Baseline method
+│   ├── ideal_synchronization_3.py        # MOSA method
+│   ├── ramp_yaw_n_kuramoto_synchronization.py # FPS method
+│   ├── loitering_sync_base_class.py      # Base class for all methods
+│   ├── loitering_sync_params.yml         # Configuration parameters
+│   └── ... 
+└── metrics/ # Data gathering & performance analysis
+    ├── data_analysis.py # Plotting and analysis tools
+    └── ...
+## References
+AlKatheeri, A., Barciś, A., & Ferrante, E. (2023). Distributed Loitering Synchronization with Fixed-Wing UAVs.
+## License
+[License information]
+This README provides a comprehensive explanation of the three synchronization methods (baseline, MOSA, and FPS) from the paper, with proper mathematical notation that should render correctly in most markdown viewers. You can copy and paste this directly into your repository.
