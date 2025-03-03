@@ -88,14 +88,13 @@ The system uses the following key parameters:
 
 ### Parameters Configuration
 Configure parameters in `loitering_sync_params.yml` including:
-```yaml
+
 # Key parameters
 chosen_method: 'mean'  # Options: 'ideal3' (MOSA), 'ramp_yaw_n_kuramoto' (FPS), 'mean' (Baseline)
 N_YAW: 4  # Number of pulse locations for FPS method
 ACCEPTANCE_RANGE: 0.2  # Synchronization threshold in radians
 LOITER_RADIUS: 150  # Radius of loitering circle in meters
 CONTROL_DELAY: 1.0  # Control loop time step
-yaml```
 
 ### Running the Synchronization
 bash
