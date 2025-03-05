@@ -103,18 +103,6 @@ Running Metrics and Visualization
 bash
 ros2 run lrs_loitering_sync loitering_sync_metrics
 
-### Repository Structure
-.
-├── lrs_loitering_sync/ # Core algorithm implementations
-│   ├── mean_angle_synchronization.py     # Baseline method
-│   ├── ideal_synchronization_3.py        # MOSA method
-│   ├── ramp_yaw_n_kuramoto_synchronization.py # FPS method
-│   ├── loitering_sync_base_class.py      # Base class for all methods
-│   ├── loitering_sync_params.yml         # Configuration parameters
-│   └── ... 
-└── metrics/ # Data gathering & performance analysis
-    ├── data_analysis.py # Plotting and analysis tools
-    └── ...
 ## References
 AlKatheeri, A., Barciś, A., & Ferrante, E. (2023). Distributed Loitering Synchronization with Fixed-Wing UAVs.
 ## License
